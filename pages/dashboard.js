@@ -27,7 +27,7 @@ function DashboardContent() {
             <span className="hidden text-sm text-slate-500 sm:inline">{user.full_name}</span>
             <button
               onClick={logout}
-              className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+              className="rounded-lg bg-navy px-3 py-2 text-sm font-medium text-white transition hover:opacity-90"
             >
               Log out
             </button>

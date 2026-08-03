@@ -83,6 +83,9 @@ function ProjectDetailContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [deletingId, setDeletingId] = useState(null);
+  const [summary, setSummary] = useState("");
+  const [summaryLoading, setSummaryLoading] = useState(false);
+  const [summaryError, setSummaryError] = useState("");
 
   async function loadData() {
     setLoading(true);
@@ -112,6 +115,20 @@ function ProjectDetailContent() {
       alert(err.response?.data?.message || "Could not delete this update.");
     } finally {
       setDeletingId(null);
+    }
+  }
+
+  async function handleGenerateSummary() {
+    setSummaryLoading(true);
+    setSummaryError("");
+    setSummary("");
+    try {
+      const { data } = await api.get(`/reports/project/${id}/summary`);
+      setSummary(data.summary);
+    } catch (err) {
+      setSummaryError(err.response?.data?.message || "Could not generate a summary.");
+    } finally {
+      setSummaryLoading(false);
     }
   }
 
@@ -148,6 +165,37 @@ function ProjectDetailContent() {
               >
                 + Add daily update
               </Link>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-8">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-semibold text-gray-800">AI Summary</h3>
+                <button
+                  type="button"
+                  onClick={handleGenerateSummary}
+                  disabled={summaryLoading}
+                  className="text-sm bg-navy text-white rounded-md px-4 py-1.5 hover:opacity-90 disabled:opacity-50"
+                >
+                  {summaryLoading ? "Summarizing..." : summary ? "Regenerate" : "Generate summary"}
+                </button>
+              </div>
+
+              {!summary && !summaryLoading && !summaryError && (
+                <p className="text-sm text-gray-500">
+                  Summarize all daily updates (text and photos) into a short progress report.
+                </p>
+              )}
+              {summaryLoading && (
+                <p className="text-sm text-gray-500">Reading updates and generating summary...</p>
+              )}
+              {summaryError && (
+                <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2">
+                  {summaryError}
+                </div>
+              )}
+              {summary && !summaryLoading && (
+                <p className="text-sm text-gray-700 whitespace-pre-wrap">{summary}</p>
+              )}
             </div>
 
             <h3 className="font-semibold text-gray-800 mb-3">Daily updates</h3>

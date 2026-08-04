@@ -36,14 +36,12 @@ function DashboardContent() {
       </div>
 
       <main className="max-w-5xl mx-auto px-6 py-2 pb-10">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
-          Welcome, {user.full_name.split(" ")[0]}
-        </h2>
         <p className="text-gray-500 mb-8">
           This is your BuildTrack workspace. Project and reporting modules will appear here in the next phase.
         </p>
 
-        <div className="grid sm:grid-cols-2 gap-4">
+        {/* Changed grid to flex column for vertical stacking */}
+        <div className="flex flex-col gap-4">
           <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-5">
             <h3 className="font-semibold text-gray-800 mb-1">Projects</h3>
             <p className="text-sm text-gray-500 mb-3">Create and manage your construction sites.</p>
@@ -56,23 +54,14 @@ function DashboardContent() {
           </div>
           <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-5">
             <h3 className="font-semibold text-gray-800 mb-1">Daily Reports</h3>
-            <p className="text-sm text-gray-500">Coming in Phase 2: submit and review daily site reports.</p>
+            <p className="text-sm text-gray-500">Select a project to view or submit daily reports.</p>
+            <Link
+              href="/projects"
+              className="inline-block text-sm bg-navy text-white rounded-md px-4 py-2 hover:opacity-90"
+            >
+              Select project
+            </Link>
           </div>
-
-          {user.role === "admin" && (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-5 sm:col-span-2">
-              <h3 className="font-semibold text-gray-800 mb-1">Team Management</h3>
-              <p className="text-sm text-gray-500 mb-3">
-                Add project managers and site engineers to your company workspace.
-              </p>
-              <Link
-                href="/team"
-                className="inline-block text-sm bg-navy text-white rounded-md px-4 py-2 hover:opacity-90"
-              >
-                Manage team
-              </Link>
-            </div>
-          )}
         </div>
       </main>
     </div>

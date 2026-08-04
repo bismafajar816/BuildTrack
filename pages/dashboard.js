@@ -1,6 +1,8 @@
+// pages/dashboard.js
 import Link from "next/link";
 import { useAuth } from "../context/AuthContext";
 import ProtectedRoute from "../components/ProtectedRoute";
+import { AnalyticsOverview } from "./analytics";  // ✅ named import
 
 const ROLE_LABELS = {
   admin: "Admin",
@@ -40,8 +42,9 @@ function DashboardContent() {
           This is your BuildTrack workspace. Project and reporting modules will appear here in the next phase.
         </p>
 
-        {/* Changed grid to flex column for vertical stacking */}
+        {/* All cards stacked vertically */}
         <div className="flex flex-col gap-4">
+          {/* Projects */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-5">
             <h3 className="font-semibold text-gray-800 mb-1">Projects</h3>
             <p className="text-sm text-gray-500 mb-3">Create and manage your construction sites.</p>
@@ -52,6 +55,8 @@ function DashboardContent() {
               View projects
             </Link>
           </div>
+
+          {/* Daily Reports */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-5">
             <h3 className="font-semibold text-gray-800 mb-1">Daily Reports</h3>
             <p className="text-sm text-gray-500">Select a project to view or submit daily reports.</p>
@@ -61,6 +66,12 @@ function DashboardContent() {
             >
               Select project
             </Link>
+          </div>
+
+          {/* 📊 Analytics – embedded from company‑wide analytics */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-5">
+            <h3 className="font-semibold text-gray-800 mb-3">Analytics Overview</h3>
+            <AnalyticsOverview />
           </div>
         </div>
       </main>

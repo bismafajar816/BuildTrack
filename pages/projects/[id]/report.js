@@ -86,21 +86,22 @@ function AddReportContent() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-navy text-white px-6 py-4 flex items-center justify-between">
-        <h1 className="text-lg font-semibold">BuildTrack</h1>
-        <Link
-          href={id ? `/projects/${id}` : "/projects"}
-          className="text-sm bg-white/10 hover:bg-white/20 rounded-md px-3 py-1.5"
-        >
-          &larr; Back to project
-        </Link>
-      </header>
-
       <main className="max-w-lg mx-auto px-6 py-10">
-        <h2 className="text-2xl font-bold text-gray-800 mb-1">Add daily update</h2>
-        <p className="text-gray-500 mb-8">
-          {projectName ? `For ${projectName}` : "Loading project..."}
-        </p>
+        {/* Header with back button and title */}
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800">Add daily update</h2>
+            <p className="text-gray-500">
+              {projectName ? `For ${projectName}` : "Loading project..."}
+            </p>
+          </div>
+          <Link
+            href={id ? `/projects/${id}` : "/projects"}
+            className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+          >
+            &larr; Back to project
+          </Link>
+        </div>
 
         {/* Step 1: ask what type of information */}
         {entryType === null && (

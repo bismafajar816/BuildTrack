@@ -17,10 +17,12 @@ function TopBar() {
           </div>
         </div>
 
-        <div className="hidden items-center gap-4 md:flex">
-          <span className="text-sm font-medium text-slate-600">Build smarter. Deliver stronger.</span>
-          <span className="h-4 w-px bg-slate-300" />
-          <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-slate-600">
+        <div className="flex flex-col items-end gap-1 text-right sm:flex-row sm:items-center sm:gap-3 md:gap-4">
+          <span className="max-w-[160px] text-[10px] font-medium leading-snug text-slate-600 sm:max-w-none sm:text-xs md:text-sm">
+            Build smarter. Deliver stronger.
+          </span>
+          <span className="hidden h-4 w-px bg-slate-300 sm:block" />
+          <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-slate-600 sm:px-3 sm:py-1 sm:text-[10px] md:text-xs">
             Trusted execution
           </span>
         </div>

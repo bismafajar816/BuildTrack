@@ -2,7 +2,8 @@
 import Link from "next/link";
 import { useAuth } from "../context/AuthContext";
 import ProtectedRoute from "../components/ProtectedRoute";
-import { AnalyticsOverview } from "./analytics";
+import { AnalyticsOverview } from "./analytics"; // company-wide (admin only)
+import { ProjectAnalyticsOverview } from "./projects/[id]/analytics"; // ✅ fixed import path
 
 const ROLE_LABELS = {
   admin: "Admin",
@@ -40,11 +41,10 @@ function DashboardContent() {
         </div>
       </div>
 
-      {/* Main content – full width, two columns with swapped sizes */}
       <main className="px-4 pb-12 sm:px-6 lg:px-8">
         <div className="mb-8 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <p className="text-sm text-slate-600">
-            This is your BuildTrack workspace. Project tracking and reporting tools are organized here for smooth day-to-day operations.
+            This is your BuildTrack workspace. Project tracking and reporting tools are organized here for smooth day‑to‑day operations.
           </p>
         </div>
 
@@ -55,7 +55,16 @@ function DashboardContent() {
               <h3 className="mt-1 text-xl font-semibold text-slate-900">Analytics overview</h3>
             </div>
           </div>
-          <AnalyticsOverview />
+
+          {user.role === "admin" ? (
+            <AnalyticsOverview />
+          ) : user.project_id ? (
+            <ProjectAnalyticsOverview projectId={user.project_id} />
+          ) : (
+            <p className="text-sm text-slate-500">
+              You are not assigned to any project yet. Analytics will appear here once you are added to a project.
+            </p>
+          )}
         </div>
       </main>
     </div>

@@ -1,29 +1,91 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import ProtectedRoute from "../components/ProtectedRoute";
+import { useAuth } from "../context/AuthContext";
 import api from "../lib/api";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const passwordRegex = /^(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
+const ROLE_LABELS = {
+  admin: "Admin",
+  project_manager: "Project Manager",
+  site_engineer: "Site Engineer",
+};
+
 function TeamContent() {
+  const { user } = useAuth();
+
+  // ─── Role check: if not admin, show message ──────────────────────────
+  if (user?.role !== "admin") {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center px-4">
+        <div className="text-center max-w-md">
+          <div className="text-6xl mb-4">🔒</div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Access restricted</h2>
+          <p className="text-gray-600">
+            Only administrators can access the team management page.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // ─── Admin only: full team management ────────────────────────────────
   const [form, setForm] = useState({
     fullName: "",
     email: "",
     password: "",
     role: "site_engineer",
+    project_id: "",
   });
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  const [projects, setProjects] = useState([]);
+  const [projectsError, setProjectsError] = useState("");
+
+  const [team, setTeam] = useState([]);
+  const [teamLoading, setTeamLoading] = useState(true);
+  const [teamError, setTeamError] = useState("");
+
   const emailIsInvalid = form.email.length > 0 && !emailRegex.test(form.email);
   const passwordIsInvalid = form.password.length > 0 && !passwordRegex.test(form.password);
   const isFormValid =
     form.fullName.trim() &&
     emailRegex.test(form.email) &&
-    passwordRegex.test(form.password);
+    passwordRegex.test(form.password) &&
+    !!form.project_id;
+
+  async function loadProjects() {
+    setProjectsError("");
+    try {
+      const { data } = await api.get("/projects");
+      setProjects(data.projects);
+    } catch (err) {
+      setProjectsError(err.response?.data?.message || "Could not load your projects.");
+    }
+  }
+
+  async function loadTeam() {
+    setTeamLoading(true);
+    setTeamError("");
+    try {
+      const { data } = await api.get("/auth/team");
+      setTeam(data.team);
+    } catch (err) {
+      setTeamError(err.response?.data?.message || "Could not load the team.");
+    } finally {
+      setTeamLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadProjects();
+    loadTeam();
+  }, []);
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -42,7 +104,8 @@ function TeamContent() {
     try {
       await api.post("/auth/invite", form);
       setMessage(`${form.fullName} was added successfully.`);
-      setForm({ fullName: "", email: "", password: "", role: "site_engineer" });
+      setForm({ fullName: "", email: "", password: "", role: "site_engineer", project_id: "" });
+      loadTeam();
     } catch (err) {
       setError(err.response?.data?.message || "Could not add team member.");
     } finally {
@@ -53,11 +116,9 @@ function TeamContent() {
   return (
     <div className="min-h-screen bg-gray-50 px-6 py-10">
       <div className="max-w-lg mx-auto">
-        <div className="mb-6 flex justify-start">
-        </div>
         <h1 className="text-2xl font-bold text-gray-800 mt-2 mb-6">Add a team member</h1>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
           {error && (
             <div className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2">
               {error}
@@ -66,6 +127,11 @@ function TeamContent() {
           {message && (
             <div className="mb-4 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md px-3 py-2">
               {message}
+            </div>
+          )}
+          {projectsError && (
+            <div className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2">
+              {projectsError}
             </div>
           )}
 
@@ -142,6 +208,28 @@ function TeamContent() {
                 <option value="project_manager">Project Manager</option>
               </select>
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Project</label>
+              <select
+                name="project_id"
+                value={form.project_id}
+                onChange={handleChange}
+                required
+                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-navy"
+              >
+                <option value="" disabled>
+                  {projects.length === 0 ? "No projects yet — create one first" : "Select a project"}
+                </option>
+                {projects.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+              <p className="mt-1 text-xs text-gray-400">
+                Only projects in your own company are shown.
+              </p>
+            </div>
             <button
               type="submit"
               disabled={submitting || !isFormValid}
@@ -151,6 +239,38 @@ function TeamContent() {
             </button>
           </form>
         </div>
+
+        <h2 className="text-lg font-semibold text-gray-800 mb-3">Current team</h2>
+
+        {teamLoading && <p className="text-sm text-gray-500">Loading team...</p>}
+        {teamError && (
+          <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2 mb-4">
+            {teamError}
+          </div>
+        )}
+        {!teamLoading && !teamError && team.length === 0 && (
+          <p className="text-sm text-gray-500">No team members yet.</p>
+        )}
+
+        <div className="space-y-2">
+          {team.map((member) => (
+            <div
+              key={member.id}
+              className="bg-white rounded-lg border border-gray-100 shadow-sm px-4 py-3 flex items-center justify-between"
+            >
+              <div>
+                <p className="font-medium text-gray-800">{member.full_name}</p>
+                <p className="text-xs text-gray-500">
+                  {member.email}
+                  {member.project_name ? ` · ${member.project_name}` : ""}
+                </p>
+              </div>
+              <span className="text-xs uppercase tracking-wide text-navy bg-navy/5 rounded px-2 py-0.5">
+                {ROLE_LABELS[member.role] || member.role}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -158,7 +278,7 @@ function TeamContent() {
 
 export default function Team() {
   return (
-    <ProtectedRoute allowedRoles={["admin"]}>
+    <ProtectedRoute>
       <TeamContent />
     </ProtectedRoute>
   );

@@ -28,7 +28,7 @@ function SummaryCard({ label, value }) {
   );
 }
 
-// ─── Reusable component (no page wrapper) ──────────────────────────────
+// ─── Reusable component (admin‑only) ──────────────────────────────────
 export function AnalyticsOverview() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -50,13 +50,10 @@ export function AnalyticsOverview() {
     load();
   }, []);
 
-  // --- Build chart data with a fixed 14‑day window (including today) ---
   function buildChartData(updatesTrend = [], attendanceTrend = []) {
-    // Create maps for quick lookup
     const updatesMap = new Map(updatesTrend.map((u) => [u.date, u.count]));
     const attendanceMap = new Map(attendanceTrend.map((a) => [a.date, a.percent]));
 
-    // Generate the last 14 days (including today)
     const today = new Date();
     const dates = [];
     for (let i = 13; i >= 0; i--) {
@@ -135,7 +132,7 @@ export function AnalyticsOverview() {
   );
 }
 
-// ─── Full page (used at /analytics) ─────────────────────────────────────
+// ─── Full page (admin only) ────────────────────────────────────────────
 function AnalyticsContent() {
   return (
     <div className="min-h-screen bg-gray-50">
@@ -157,7 +154,7 @@ function AnalyticsContent() {
 
 export default function Analytics() {
   return (
-    <ProtectedRoute>
+    <ProtectedRoute allowedRoles={["admin"]}>
       <AnalyticsContent />
     </ProtectedRoute>
   );

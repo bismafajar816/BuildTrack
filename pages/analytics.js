@@ -50,12 +50,31 @@ export function AnalyticsOverview() {
     load();
   }, []);
 
-  const chartData =
-    data?.updatesTrend.map((u, i) => ({
-      date: formatShortDate(u.date),
-      updates: u.count,
-      attendance: data.attendanceTrend[i]?.percent ?? 0,
-    })) || [];
+  // --- Build chart data with a fixed 14‑day window (including today) ---
+  function buildChartData(updatesTrend = [], attendanceTrend = []) {
+    // Create maps for quick lookup
+    const updatesMap = new Map(updatesTrend.map((u) => [u.date, u.count]));
+    const attendanceMap = new Map(attendanceTrend.map((a) => [a.date, a.percent]));
+
+    // Generate the last 14 days (including today)
+    const today = new Date();
+    const dates = [];
+    for (let i = 13; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      const iso = d.toISOString().split("T")[0];
+      dates.push(iso);
+    }
+
+    return dates.map((isoDate) => ({
+      date: isoDate,
+      displayDate: formatShortDate(isoDate),
+      updates: updatesMap.get(isoDate) || 0,
+      attendance: attendanceMap.get(isoDate) || 0,
+    }));
+  }
+
+  const chartData = data ? buildChartData(data.updatesTrend, data.attendanceTrend) : [];
 
   if (loading) return <p className="text-sm text-gray-500">Loading analytics…</p>;
   if (error)
@@ -83,7 +102,7 @@ export function AnalyticsOverview() {
         <ResponsiveContainer width="100%" height={220}>
           <BarChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eee" />
-            <XAxis dataKey="date" tick={{ fontSize: 11 }} />
+            <XAxis dataKey="displayDate" tick={{ fontSize: 11 }} />
             <YAxis allowDecimals={false} tick={{ fontSize: 11 }} width={28} />
             <Tooltip />
             <Bar dataKey="updates" fill="#12122b" radius={[4, 4, 0, 0]} />
@@ -99,7 +118,7 @@ export function AnalyticsOverview() {
         <ResponsiveContainer width="100%" height={220}>
           <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eee" />
-            <XAxis dataKey="date" tick={{ fontSize: 11 }} />
+            <XAxis dataKey="displayDate" tick={{ fontSize: 11 }} />
             <YAxis domain={[0, 100]} tick={{ fontSize: 11 }} width={32} />
             <Tooltip formatter={(v) => `${v}%`} />
             <Line

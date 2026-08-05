@@ -52,6 +52,7 @@ export function ProjectAnalyticsOverview({ projectId }) {
     load();
   }, [projectId]);
 
+  // Ensure today is included in the chart (backend should already provide full 14 days)
   const chartData =
     data?.updatesTrend.map((u, i) => ({
       date: formatShortDate(u.date),
@@ -124,19 +125,21 @@ function ProjectAnalyticsContent() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-navy text-white px-6 py-4 flex items-center justify-between">
-        <h1 className="text-lg font-semibold">BuildTrack</h1>
-        <Link
-          href={id ? `/projects/${id}` : "/projects"}
-          className="text-sm bg-white/10 hover:bg-white/20 rounded-md px-3 py-1.5"
-        >
-          &larr; Back to project
-        </Link>
-      </header>
-
       <main className="max-w-4xl mx-auto px-6 py-10">
-        <h2 className="text-2xl font-bold text-gray-800 mb-1">Analytics</h2>
-        <p className="text-gray-500 mb-8">Project analytics</p>
+        {/* Header with back button */}
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800">Analytics</h2>
+            <p className="text-gray-500">Project analytics</p>
+          </div>
+          <Link
+            href={id ? `/projects/${id}` : "/projects"}
+            className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+          >
+            &larr; Back to project
+          </Link>
+        </div>
+
         <ProjectAnalyticsOverview projectId={id} />
       </main>
     </div>

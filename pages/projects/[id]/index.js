@@ -276,12 +276,6 @@ function ProjectDetailContent() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-navy text-white px-6 py-4 flex items-center justify-between">
-        <h1 className="text-lg font-semibold">BuildTrack</h1>
-        <Link href="/projects" className="text-sm bg-white/10 hover:bg-white/20 rounded-md px-3 py-1.5">
-          &larr; All projects
-        </Link>
-      </header>
 
       <main className="max-w-3xl mx-auto px-6 py-10">
         {loading && <p className="text-sm text-gray-500">Loading...</p>}

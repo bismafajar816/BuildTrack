@@ -54,13 +54,6 @@ function TeamContent() {
     <div className="min-h-screen bg-gray-50 px-6 py-10">
       <div className="max-w-lg mx-auto">
         <div className="mb-6 flex justify-start">
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
-          >
-            <span aria-hidden="true">←</span>
-            Dashboard
-          </Link>
         </div>
         <h1 className="text-2xl font-bold text-gray-800 mt-2 mb-6">Add a team member</h1>
 

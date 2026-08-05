@@ -1,3 +1,4 @@
+// pages/projects/index.js
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import ProtectedRoute from "../../components/ProtectedRoute";
@@ -52,6 +53,12 @@ function ProjectsContent() {
     }
   }
 
+  // Sort projects by creation date (newest first) and take only the first 3
+  const sortedProjects = [...projects].sort(
+    (a, b) => new Date(b.created_at) - new Date(a.created_at)
+  );
+  const recentProjects = sortedProjects.slice(0, 3);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <main className="max-w-3xl mx-auto px-6 py-10">
@@ -65,19 +72,7 @@ function ProjectsContent() {
             </p>
           </div>
 
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
-          >
-            ← Dashboard
-          </Link>
         </div>
-
-        <p className="text-gray-500 mb-8 hidden">
-          {canCreate
-            ? "Add a new construction site or view existing projects."
-            : "Construction sites for your company."}
-        </p>
 
         {canCreate && (
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
@@ -126,7 +121,16 @@ function ProjectsContent() {
           </div>
         )}
 
-        <h3 className="font-semibold text-gray-800 mb-3">All projects</h3>
+        {/* Heading with link to browse */}
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-semibold text-gray-800">Recent projects</h3>
+          <Link
+            href="/projects/browse"
+            className="text-sm font-medium text-navy hover:underline flex items-center gap-1"
+          >
+            Browse all <span>→</span>
+          </Link>
+        </div>
 
         {loading && <p className="text-sm text-gray-500">Loading projects...</p>}
         {loadError && (
@@ -134,12 +138,12 @@ function ProjectsContent() {
             {loadError}
           </div>
         )}
-        {!loading && !loadError && projects.length === 0 && (
+        {!loading && !loadError && recentProjects.length === 0 && (
           <p className="text-sm text-gray-500">No projects yet.</p>
         )}
 
         <div className="space-y-3">
-          {projects.map((project) => (
+          {recentProjects.map((project) => (
             <Link
               key={project.id}
               href={`/projects/${project.id}`}

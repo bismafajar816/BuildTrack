@@ -22,7 +22,7 @@ function formatShortDate(dateStr) {
 
 function SummaryCard({ label, value }) {
   return (
-    <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4">
+    <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4 transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-[#12122b]">
       <p className="text-xs text-gray-500 mb-1">{label}</p>
       <p className="text-2xl font-bold text-gray-800">{value}</p>
     </div>

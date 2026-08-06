@@ -1,3 +1,4 @@
+// pages/team.js
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import ProtectedRoute from "../components/ProtectedRoute";
@@ -113,10 +114,13 @@ function TeamContent() {
     }
   }
 
+  // Take only the first 3 members for the short list
+  const displayedTeam = team.slice(0, 3);
+
   return (
     <div className="min-h-screen bg-gray-50 px-6 py-10">
       <div className="max-w-lg mx-auto">
-        <h1 className="text-2xl font-bold text-gray-800 mt-2 mb-6">Add a team member</h1>
+        <h1 className="text-2xl font-bold text-gray-800 mb-6">Team management</h1>
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
           {error && (
@@ -240,7 +244,16 @@ function TeamContent() {
           </form>
         </div>
 
-        <h2 className="text-lg font-semibold text-gray-800 mb-3">Current team</h2>
+        {/* Current team heading with View whole team button */}
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-lg font-semibold text-gray-800">Current team</h2>
+          <Link
+            href="/team/browse"
+            className="bg-navy text-white rounded-md px-4 py-2 text-sm font-medium hover:opacity-90 transition"
+          >
+            View whole team
+          </Link>
+        </div>
 
         {teamLoading && <p className="text-sm text-gray-500">Loading team...</p>}
         {teamError && (
@@ -253,7 +266,7 @@ function TeamContent() {
         )}
 
         <div className="space-y-2">
-          {team.map((member) => (
+          {displayedTeam.map((member) => (
             <div
               key={member.id}
               className="bg-white rounded-lg border border-gray-100 shadow-sm px-4 py-3 flex items-center justify-between"

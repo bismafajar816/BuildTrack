@@ -21,7 +21,7 @@ function formatShortDate(dateStr) {
 
 function SummaryCard({ label, value }) {
   return (
-    <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4">
+    <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4 transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-[#12122b]">
       <p className="text-xs text-gray-500 mb-1">{label}</p>
       <p className="text-2xl font-bold text-gray-800">{value}</p>
     </div>
@@ -136,16 +136,12 @@ export function AnalyticsOverview() {
 function AnalyticsContent() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-navy text-white px-6 py-4 flex items-center justify-between">
-        <h1 className="text-lg font-semibold">BuildTrack</h1>
-        <Link href="/dashboard" className="text-sm bg-white/10 hover:bg-white/20 rounded-md px-3 py-1.5">
-          &larr; Dashboard
-        </Link>
-      </header>
-
       <main className="max-w-4xl mx-auto px-6 py-10">
-        <h2 className="text-2xl font-bold text-gray-800 mb-1">Analytics</h2>
-        <p className="text-gray-500 mb-8">Company‑wide activity across all your projects.</p>
+        {/* Header – now using a container with mb-6 for consistent spacing */}
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-gray-800">Analytics</h2>
+          <p className="text-gray-500">Company‑wide activity across all your projects.</p>
+        </div>
         <AnalyticsOverview />
       </main>
     </div>

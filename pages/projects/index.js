@@ -7,7 +7,8 @@ import api from "../../lib/api";
 
 function ProjectsContent() {
   const { user } = useAuth();
-  const canCreate = user.role === "admin" || user.role === "project_manager";
+  // Only admin can create new projects
+  const canCreate = user?.role === "admin";
 
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -71,7 +72,6 @@ function ProjectsContent() {
                 : "Construction sites for your company."}
             </p>
           </div>
-
         </div>
 
         {canCreate && (
@@ -121,14 +121,14 @@ function ProjectsContent() {
           </div>
         )}
 
-        {/* Heading with link to browse */}
+        {/* Heading with link to browse – now styled as a navy button */}
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-semibold text-gray-800">Recent projects</h3>
           <Link
             href="/projects/browse"
-            className="text-sm font-medium text-navy hover:underline flex items-center gap-1"
+            className="bg-navy text-white rounded-md px-3 py-1.5 text-sm font-medium hover:opacity-90 transition"
           >
-            Browse all <span>→</span>
+            Browse all
           </Link>
         </div>
 

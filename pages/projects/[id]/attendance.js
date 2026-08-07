@@ -96,14 +96,14 @@ function AttendanceContent() {
         {/* Header with back button and title */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-2xl font-bold text-gray-800">Laborers</h2>
+            <h2 className="text-2xl font-bold text-gray-800">Attendance for Laborers</h2>
             <p className="text-gray-500">
               {projectName ? `Working on ${projectName}` : "Loading project..."}
             </p>
           </div>
           <Link
             href={id ? `/projects/${id}` : "/projects"}
-            className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+            className="inline-flex items-center justify-center rounded-lg bg-navy px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:opacity-90"
           >
             &larr; Back to project
           </Link>

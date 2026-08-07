@@ -179,7 +179,7 @@ function BrowseProjectsContent() {
           </div>
           <Link
             href="/projects"
-            className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition"
+            className="inline-flex items-center rounded-md bg-navy px-4 py-2 text-sm font-medium text-white shadow-sm hover:opacity-90 transition"
           >
             ← Back to projects
           </Link>

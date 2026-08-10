@@ -5,7 +5,6 @@ import Link from "next/link";
 import ProtectedRoute from "../../../components/ProtectedRoute";
 import { useAuth } from "../../../context/AuthContext";
 import api, { API_ORIGIN } from "../../../lib/api";
-// 👇 Import the reusable analytics component
 import { ProjectAnalyticsOverview } from "./analytics";
 
 function imageUrlFor(imagePath) {
@@ -163,6 +162,7 @@ function ProjectDetailContent() {
     }
   }
 
+  // ─── FIXED: handles all response shapes correctly ─────────────────────
   async function handleGenerateSummary(lang = summaryLanguage) {
     setSummaryLoading(true);
     setSummaryError("");
@@ -174,13 +174,25 @@ function ProjectDetailContent() {
       else if (lang === "urdu") endpoint += "?lang=urdu";
       const { data } = await api.get(endpoint);
 
+      // Case 1: bilingual response (summaries object)
       if (data.summaries) {
         setSummaryData({
           english: data.summaries.english,
           urdu: data.summaries.urdu,
         });
-        setSummary(data.summaries.english);
-      } else if (data.summary) {
+        setSummary(data.summaries.english); // fallback, will be ignored in render
+      }
+      // Case 2: both English and Urdu fields are present (e.g., ?lang=urdu)
+      else if (data.english && data.urdu) {
+        setSummaryData({
+          english: data.english,
+          urdu: data.urdu,
+        });
+        // Set the fallback `summary` to the requested language
+        setSummary(lang === "urdu" ? data.urdu : data.english);
+      }
+      // Case 3: only one summary (language indicated by `data.language`)
+      else if (data.summary) {
         setSummary(data.summary);
         if (data.language === "urdu") {
           setSummaryData({ urdu: data.summary });
@@ -197,6 +209,7 @@ function ProjectDetailContent() {
 
   function handleLanguageChange(lang) {
     setSummaryLanguage(lang);
+    // If we already have data for that language, do not regenerate
     if (
       (lang === "bilingual" && summaryData?.english && summaryData?.urdu) ||
       (lang === "urdu" && summaryData?.urdu) ||
@@ -204,6 +217,7 @@ function ProjectDetailContent() {
     ) {
       return;
     }
+    // Otherwise generate it (only if we have some data already)
     if (summary || summaryData) {
       handleGenerateSummary(lang);
     }

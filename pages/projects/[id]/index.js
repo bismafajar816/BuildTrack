@@ -9,6 +9,12 @@ import api, { API_ORIGIN } from "../../../lib/api";
 import { ProjectAnalyticsOverview } from "./analytics";
 
 function imageUrlFor(imagePath) {
+  // Images now live on Cloudflare R2 and image_path is already a full,
+  // public https:// URL — use it as-is. The API_ORIGIN fallback only
+  // covers any images uploaded before the R2 migration (local disk paths).
+  if (/^https?:\/\//i.test(imagePath)) {
+    return imagePath;
+  }
   return encodeURI(`${API_ORIGIN}/${imagePath}`);
 }
 
